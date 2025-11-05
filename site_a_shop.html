@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0e0f11" />
+  <title>Shop — Concept A (Hyper‑Modern)</title>
+  <style>
+    :root{
+      --bg:#0e0f11; /* base dark */
+      --fg:#ffffff;
+      --muted:rgba(255,255,255,.75);
+      --glass:rgba(255,255,255,.08);
+      --glass-brd:rgba(255,255,255,.16);
+      --radius:16px;
+      --space:clamp(16px,2vw,24px);
+      --scale:1;            /* updated by accessibility */
+      --shadow:0 10px 30px rgba(0,0,0,.45);
+      --blur:22px;
+      --transition:.22s ease;
+    }
+    /* high contrast mode variables */
+    .hc{ --bg:#000; --fg:#fff; --muted:#e5e5e5; --glass:rgba(255,255,255,.12); --glass-brd:rgba(255,255,255,.35); --shadow:none; }
+
+    /* base reset */
+    *,*::before,*::after{box-sizing:border-box}
+    html{font-size:100%;}
+    body{
+      margin:0; background:var(--bg); color:var(--fg);
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+      line-height:1.6; -webkit-font-smoothing:antialiased;
+      transform:scale(var(--scale)); transform-origin:0 0; /* text-size toggle */
+    }
+    a{ color:var(--fg); text-decoration:none }
+    img{ max-width:100%; display:block }
+
+    /* utilities */
+    .glass{backdrop-filter:blur(var(--blur)); background:var(--glass); border:1px solid var(--glass-brd); border-radius:var(--radius)}
+    .container{ width:min(1200px, 100% - 2*var(--space)); margin-inline:auto }
+    .sr-only{ position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden }
+    .skip{ position:fixed; left:var(--space); top:var(--space); background:#fff; color:#000; padding:.6rem 1rem; border-radius:10px; transform:translateY(-200%); transition:transform .15s }
+    .skip:focus{ transform:none }
+
+    /* header */
+    header{ position:fixed; inset:0 auto auto 0; right:0; z-index:50 }
+    .nav{ display:flex; align-items:center; justify-content:space-between; padding:.75rem var(--space) ; box-shadow:var(--shadow) }
+    .brand{ display:flex; gap:.75rem; align-items:center }
+    .brand img{ height:40px }
+    .brand span{ font-weight:700; letter-spacing:.2px }
+    .menu a{ padding:.7rem .85rem; margin-left:.25rem; border-radius:12px }
+    .menu a:hover{ background:rgba(255,255,255,.06) }
+
+    /* responsive menu (simple, non-functional links) */
+    .menu{ display:none }
+    .menu-btn{ appearance:none; border:0; background:transparent; color:var(--fg); font-size:1.05rem; padding:.6rem .8rem; border-radius:12px }
+    @media(min-width:900px){ .menu{ display:flex } .menu-btn{ display:none } }
+
+    /* main spacing so content is not hidden under fixed header */
+    main{ padding-top:80px }
+
+    /* hero */
+    .hero{ position:relative; min-height:75svh; display:grid; align-items:end; background:url("https://www.dartmoor.gov.uk/__data/assets/image/0034/408787/Leighon-Cirrus-Richard-Fox-Photography-subbanner.jpg") center/cover no-repeat }
+    .hero::after{ content:""; position:absolute; inset:0; background:linear-gradient(to bottom, rgba(0,0,0,.25), rgba(0,0,0,.88)) }
+    .hero-inner{ position:relative; padding:calc(var(--space)*2) var(--space) }
+    .hero h1{ font-size:clamp(2rem,6vw,4.2rem); font-weight:800; letter-spacing:.2px; margin:0 0 .6rem }
+    .hero p{ color:var(--muted); max-width:60ch; margin:0 0 1.2rem }
+    .actions{ display:flex; gap:.75rem; flex-wrap:wrap }
+    .btn{ display:inline-block; padding:.9rem 1.25rem; border-radius:14px; font-weight:700; background:#fff; color:#0e0f11; transition:transform var(--transition) }
+    .btn:hover{ transform:translateY(-3px) }
+    .btn-ghost{ background:transparent; color:#fff; border:1px solid var(--glass-brd) }
+
+    /* sections */
+    .section{ padding:clamp(40px,8vw,88px) 0 }
+    .section h2{ font-size:clamp(1.4rem,2.8vw,2rem); margin-bottom:1.1rem; font-weight:800 }
+
+    /* cards grid */
+    .grid{ display:grid; gap:clamp(14px,2.5vw,24px) }
+    @media(min-width:700px){ .grid-3{ grid-template-columns:repeat(3,1fr) }}
+    .card{ position:relative; height:240px; border-radius:18px; overflow:hidden; cursor:pointer; box-shadow:var(--shadow); transition:transform var(--transition) }
+    .card:hover{ transform:translateY(-6px) }
+    .card img{ width:100%; height:100%; object-fit:cover }
+    .card::after{ content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.15)) }
+    .card span{ position:absolute; inset:auto auto 14px 14px; font-weight:700 }
+
+    footer{ padding:48px 0; opacity:.7; font-size:.9rem; text-align:center }
+
+    /* accessibility panel */
+    .a11y-toggle{ position:fixed; right:var(--space); top:var(--space); z-index:60 }
+    .fab{ border:0; border-radius:999px; padding:.85rem 1rem; box-shadow:var(--shadow); font-weight:700 }
+    .panel{ position:fixed; right:var(--space); bottom:calc(var(--space) + 60px); width:min(340px, calc(100% - 2*var(--space))); padding:16px; display:none }
+    .panel.open{ display:block }
+    .panel h3{ font-size:1.05rem; margin-bottom:.5rem }
+    .panel .row{ display:flex; align-items:center; justify-content:space-between; padding:.55rem .6rem; border-radius:12px; background:rgba(255,255,255,.06); margin:.45rem 0 }
+    .panel label{ font-size:.95rem }
+    .switch{ position:relative; width:48px; height:28px }
+    .switch input{ opacity:0; width:0; height:0 }
+    .slider{ position:absolute; cursor:pointer; inset:0; background:rgba(255,255,255,.25); border-radius:999px; transition:background var(--transition) }
+    .slider::before{ content:""; position:absolute; height:22px; width:22px; left:3px; top:3px; border-radius:50%; background:#fff; transition:transform var(--transition) }
+    .switch input:checked + .slider{ background:#fff }
+    .switch input:checked + .slider::before{ transform:translateX(20px); background:#000 }
+
+    /* reduce motion mode */
+    .rm *{ transition:none !important; animation:none !important }
+
+    /* bigger tap targets for mobile */
+    .menu a,.btn,.fab{ min-height:44px }
+    /* shop components */
+    .product-card{ border-radius:18px; overflow:hidden; display:flex; flex-direction:column; }
+    .product-card .media{ aspect-ratio: 4/3; overflow:hidden }
+    .product-card img{ width:100%; height:100%; object-fit:cover; transition:transform var(--transition) }
+    .product-card:hover img{ transform:scale(1.04) }
+    .product-card .meta{ padding:1rem }
+    .product-card h3{ font-size:1rem; font-weight:700; margin-bottom:.25rem }
+    .price{ opacity:.9; margin-bottom:.75rem }
+    .badge{ display:inline-block }
+
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip">Skip to content</a>
+  <header>
+    <div class="nav glass container">
+      <div class="brand">
+        <img src="https://www.dartmoor.gov.uk/__data/assets/image/0016/29113/apple-touch-icon.png?v=0.2.1" alt="Dartmoor National Park Logo" />
+        <span>Dartmoor National Park</span>
+      </div>
+      <button class="menu-btn glass" aria-label="Open Menu">Menu</button>
+      <nav class="menu" aria-label="Primary">
+        <a href="#">Shop</a>
+        <a href="#">New</a>
+        <a href="#">Best Sellers</a>
+        <a href="#">Sale</a>
+      </nav>
+      <div class="actions" style="display:flex; align-items:center; gap:.5rem">
+        <input class="glass" id="search" placeholder="Search products…" style="height:40px; padding:.5rem .75rem; border-radius:12px; border:0; color:#fff; min-width:140px" />
+        <button class="glass" id="cartBtn" aria-label="Open cart" style="position:relative; padding:.6rem 1rem; border:0; border-radius:12px;">
+          Cart <span id="cartQty" class="badge" style="position:absolute; top:-8px; right:-8px; background:#fff; color:#000; border-radius:999px; padding:2px 7px; font-weight:800; font-size:.75rem">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="hero-inner container">
+        <h1>Shop Dartmoor</h1>
+        <p>Guides, maps, gifts and apparel inspired by the moor. All proceeds support conservation.</p>
+        <div class="actions">
+          <a class="btn" href="#">Shop New Arrivals</a>
+          <a class="btn btn-ghost" href="#">View All</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2>Featured Products</h2>
+
+        <!-- toolbar -->
+        <div class="glass" style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; padding:.6rem; border-radius:14px; margin:1rem 0 1.5rem">
+          <div class="chips" style="display:flex; gap:.5rem; flex:1 1 auto">
+            <button class="btn btn-ghost">Maps</button>
+            <button class="btn btn-ghost">Guides</button>
+            <button class="btn btn-ghost">Clothing</button>
+            <button class="btn btn-ghost">Gifts</button>
+          </div>
+          <select class="glass" aria-label="Sort products" style="height:40px; padding:.4rem .6rem; border:0; border-radius:12px; color:#fff">
+            <option>Sort: Featured</option>
+            <option>Price: Low to High</option>
+            <option>Price: High to Low</option>
+            <option>Newest</option>
+          </select>
+        </div>
+
+        <!-- product grid -->
+        <div class="grid grid-3" id="products">
+          <!-- product cards (demo) -->
+          <div class="product-card glass">
+            <div class="media"><img src="https://www.dartmoor.gov.uk/__data/assets/image/0034/408787/Leighon-Cirrus-Richard-Fox-Photography-subbanner.jpg" alt="Dartmoor Explorer Map"/></div>
+            <div class="meta">
+              <h3>Explorer Map</h3>
+              <p class="price">£9.99</p>
+              <button class="btn add">Add to Basket</button>
+            </div>
+          </div>
+          <div class="product-card glass">
+            <div class="media"><img src="https://www.dartmoor.gov.uk/__data/assets/image/0034/408787/Leighon-Cirrus-Richard-Fox-Photography-subbanner.jpg" alt="Walking Guidebook"/></div>
+            <div class="meta">
+              <h3>Walking Guidebook</h3>
+              <p class="price">£12.50</p>
+              <button class="btn add">Add to Basket</button>
+            </div>
+          </div>
+          <div class="product-card glass">
+            <div class="media"><img src="https://www.dartmoor.gov.uk/__data/assets/image/0034/408787/Leighon-Cirrus-Richard-Fox-Photography-subbanner.jpg" alt="Moorland Hoodie"/></div>
+            <div class="meta">
+              <h3>Moorland Hoodie</h3>
+              <p class="price">£34.00</p>
+              <button class="btn add">Add to Basket</button>
+            </div>
+          </div>
+          <div class="product-card glass">
+            <div class="media"><img src="https://www.dartmoor.gov.uk/__data/assets/image/0034/408787/Leighon-Cirrus-Richard-Fox-Photography-subbanner.jpg" alt="Heritage Enamel Mug"/></div>
+            <div class="meta">
+              <h3>Heritage Enamel Mug</h3>
+              <p class="price">£10.00</p>
+              <button class="btn add">Add to Basket</button>
+            </div>
+          </div>
+          <div class="product-card glass">
+            <div class="media"><img src="https://www.dartmoor.gov.uk/__data/assets/image/0034/408787/Leighon-Cirrus-Richard-Fox-Photography-subbanner.jpg" alt="Wildlife Poster"/></div>
+            <div class="meta">
+              <h3>Wildlife Poster</h3>
+              <p class="price">£7.50</p>
+              <button class="btn add">Add to Basket</button>
+            </div>
+          </div>
+          <div class="product-card glass">
+            <div class="media"><img src="https://www.dartmoor.gov.uk/__data/assets/image/0034/408787/Leighon-Cirrus-Richard-Fox-Photography-subbanner.jpg" alt="Trail Water Bottle"/></div>
+            <div class="meta">
+              <h3>Trail Water Bottle</h3>
+              <p class="price">£14.00</p>
+              <button class="btn add">Add to Basket</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container">Concept Theme A — Hyper‑Modern Demo • Dartmoor National Park</footer>
+
+  <!-- accessibility dropdown in header + simple cart demo -->
+<script>
+// inject a11y button
+const nav = document.querySelector('.nav');
+const accBtn = document.createElement('button');
+accBtn.className = 'glass';
+accBtn.style.padding = '.6rem 1rem';
+accBtn.style.marginLeft = '.5rem';
+accBtn.textContent = 'Accessibility';
+accBtn.setAttribute('aria-expanded','false');
+accBtn.id = 'a11yBtn';
+nav.appendChild(accBtn);
+
+// create dropdown
+const panel = document.createElement('div');
+panel.className = 'panel glass';
+panel.id = 'a11yPanel';
+panel.style.right = 'var(--space)';
+panel.style.top = '70px';
+panel.innerHTML = `
+  <h3 style="margin-bottom:.5rem">Accessibility</h3>
+  <div class="row">
+    <label for="hc">High Contrast</label>
+    <label class="switch">
+      <input type="checkbox" id="hc" />
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div class="row">
+    <label for="rm">Reduce Motion</label>
+    <label class="switch">
+      <input type="checkbox" id="rm" />
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div class="row" style="justify-content:space-between">
+    <label>Text Size</label>
+    <div>
+      <button class="btn btn-ghost" id="txtNormal">Normal</button>
+      <button class="btn" id="txtLarge">Large</button>
+    </div>
+  </div>`;
+document.body.appendChild(panel);
+
+// toggle
+accBtn.addEventListener('click', () => {
+  const open = panel.classList.toggle('open');
+  accBtn.setAttribute('aria-expanded', String(open));
+});
+
+// handlers
+panel.querySelector('#hc').addEventListener('change', e => document.body.classList.toggle('hc', e.target.checked));
+panel.querySelector('#rm').addEventListener('change', e => document.body.classList.toggle('rm', e.target.checked));
+panel.querySelector('#txtNormal').onclick = () => document.documentElement.style.setProperty('--scale',1);
+panel.querySelector('#txtLarge').onclick = () => document.documentElement.style.setProperty('--scale',1.12);
+
+// simple cart badge demo
+let qty = 0;
+const badge = document.getElementById('cartQty');
+[...document.querySelectorAll('.add')].forEach(btn => btn.addEventListener('click', () => {
+  qty += 1; badge.textContent = qty;
+}));
+</script>
+</body>
+</html>

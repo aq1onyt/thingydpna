@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dartmoor National Park — Concept B (Heritage / Nature-Classic)</title>
+  <style>
+    /* ===== design tokens (heritage) ===== */
+    :root{
+      --green:#255b2a;         /* heritage green */
+      --green-600:#1f4a23;
+      --stone:#e7e4dd;         /* warm stone */
+      --offwhite:#faf8f3;      /* paper */
+      --ink:#1b1b1b;           /* body text */
+      --muted:#5b5b5b;         /* muted text */
+      --radius:10px;           /* minimal corners */
+      --space:clamp(14px,2vw,22px);
+      --shadow:0 6px 18px rgba(0,0,0,.08);
+      --transition:.18s ease;  /* gentle */
+    }
+
+    /* ===== reset ===== */
+    *,*::before,*::after{ box-sizing:border-box }
+    html{ font-size:100% }
+    body{
+      margin:0; color:var(--ink); background:var(--offwhite);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
+      line-height:1.6; -webkit-font-smoothing:antialiased;
+    }
+    img{ max-width:100%; display:block }
+    a{ color:var(--green); text-decoration:none }
+
+    /* serif display for headings */
+    h1,h2,h3,.brand span{ font-family: Georgia, "Times New Roman", serif }
+
+    /* subtle paper grain header/footer using layered gradients (no external asset) */
+    .paper{ background:
+      radial-gradient(100% 100% at 50% 0%, rgba(0,0,0,.025), transparent 60%),
+      repeating-linear-gradient(0deg, rgba(0,0,0,.015) 0 2px, transparent 2px 4px),
+      var(--stone);
+    }
+
+    .container{ width:min(1200px, 100% - 2*var(--space)); margin-inline:auto }
+
+    /* ===== header ===== */
+    header{ position:sticky; top:0; z-index:50; border-bottom:1px solid rgba(0,0,0,.08) }
+    .topbar{ display:flex; align-items:center; justify-content:space-between; padding:.8rem 0; gap:.6rem }
+    .brand{ display:flex; align-items:center; gap:.6rem }
+    .brand img{ height:40px }
+    .brand span{ font-weight:700; letter-spacing:.2px; color:var(--green) }
+
+    nav a{ padding:.5rem .75rem; border-radius:var(--radius); color:var(--ink) }
+    nav a:hover{ background:rgba(37,91,42,.08) }
+
+    /* search input hover polish */
+    .search:hover{ background:#fff; box-shadow:0 2px 10px rgba(0,0,0,.06) }
+
+    .menu{ display:none }
+    .menu-btn{ appearance:none; border:1px solid rgba(0,0,0,.12); background:var(--offwhite); padding:.5rem .75rem; border-radius:var(--radius); color:var(--ink) }
+    @media(min-width:900px){ .menu{ display:flex } .menu-btn{ display:none } }
+
+    /* accessibility button as header dropdown */
+    .a11y-btn{ border:1px solid rgba(0,0,0,.12); background:var(--offwhite); padding:.5rem .75rem; border-radius:var(--radius); color:var(--ink) }
+    .panel{ position:absolute; right:0; top:calc(100% + 8px); width:min(340px, calc(100% - 2*var(--space))); background:var(--offwhite); border:1px solid rgba(0,0,0,.12); border-radius:12px; box-shadow:var(--shadow); display:none; }
+    .panel.open{ display:block }
+    .panel-inner{ padding:12px }
+    .row{ display:flex; align-items:center; justify-content:space-between; background:rgba(0,0,0,.03); border-radius:10px; padding:.55rem .6rem; margin:.45rem 0 }
+    .switch{ position:relative; width:48px; height:28px }
+    .switch input{ opacity:0; width:0; height:0 }
+    .slider{ position:absolute; cursor:pointer; inset:0; background:rgba(0,0,0,.2); border-radius:999px; transition:background var(--transition) }
+    .slider::before{ content:""; position:absolute; height:22px; width:22px; left:3px; top:3px; border-radius:50%; background:#fff; transition:transform var(--transition) }
+    .switch input:checked + .slider{ background:var(--green) }
+    .switch input:checked + .slider::before{ transform:translateX(20px) }
+
+    /* high contrast + reduce motion */
+    .hc{ filter:contrast(1.05) }
+    .rm *{ transition:none !important; animation:none !important }
+
+    /* ===== hero ===== */
+    .hero{ position:relative; }
+    .hero .wrap{ display:grid; gap:var(--space); align-items:center; padding:clamp(28px,7vw,64px) 0 }
+    @media(min-width:900px){ .hero .wrap{ grid-template-columns: 1.2fr 1fr } }
+    .hero .copy h1{ font-size:clamp(2rem,5vw,3.4rem); margin:0 0 .5rem }
+    .hero .copy p{ color:var(--muted); max-width:60ch; margin:0 0 1.2rem }
+    .btn{ display:inline-block; padding:.8rem 1.1rem; background:var(--green); color:#fff; border-radius:var(--radius); border:1px solid var(--green-600); font-weight:700; transition:opacity .12s ease }
+    .btn:hover{ opacity:.92 }
+    .btn-ghost{ background:transparent; color:var(--green); border:1px solid rgba(0,0,0,.18) }
+
+    .hero .photo{ border-radius:14px; overflow:hidden; box-shadow:var(--shadow); }
+    .hero .photo img{ width:100%; height:100%; object-fit:cover }
+
+    /* ===== feature triptych ===== */
+    .section{ padding:clamp(36px,7vw,80px) 0 }
+    .section h2{ font-family:Georgia, "Times New Roman", serif; font-size:clamp(1.4rem,2.6vw,2rem); margin:0 0 1rem }
+    .grid{ display:grid; gap:var(--space) }
+    @media(min-width:800px){ .grid-3{ grid-template-columns:repeat(3,1fr) } }
+
+    .card{ background:var(--offwhite); border:1px solid rgba(0,0,0,.12); border-radius:14px; overflow:hidden; box-shadow:var(--shadow) }
+    .card .img{ aspect-ratio:4/3; background:var(--stone); overflow:hidden }
+    .card .img img{ width:100%; height:100%; object-fit:cover; transform:translateZ(0) }
+    .card .body{ padding:14px }
+    .card h3{ font-family:Georgia, "Times New Roman", serif; font-size:1.1rem; margin:.2rem 0 .35rem }
+    .card p{ color:var(--muted); font-size:.95rem; margin:0 0 .8rem }
+
+    footer{ border-top:1px solid rgba(0,0,0,.08); padding:28px 0; color:#555; font-size:.9rem }
+  </style>
+</head>
+<body>
+  <header class="paper">
+    <div class="container topbar">
+      <div class="brand">
+        <img src="https://www.dartmoor.gov.uk/__data/assets/image/0016/29113/apple-touch-icon.png?v=0.2.1" alt="Dartmoor National Park Logo" />
+        <span>Dartmoor National Park</span>
+      </div>
+      <button class="menu-btn" aria-label="Open Menu">Menu</button>
+
+      <nav class="menu" aria-label="Primary">
+        <a href="#">Visit</a>
+        <a href="#">Plan</a>
+        <a href="#">Explore</a>
+        <a href="#">Conserve</a>
+        <a href="#">About</a>
+      </nav>
+
+      <!-- ✅ Heritage search input (added after the nav) -->
+      <input class="search" placeholder="Search…" 
+        style="height:40px; padding:.45rem .7rem; border-radius:10px; border:1px solid rgba(0,0,0,.12); background:#fff; min-width:160px" />
+
+      <div style="position:relative">
+        <button class="a11y-btn" id="a11yBtn" aria-expanded="false" aria-controls="a11yPanel">Accessibility</button>
+        <div class="panel" id="a11yPanel" role="menu" aria-label="Accessibility Options">
+          <div class="panel-inner">
+            <div class="row">
+              <label for="hc">High Contrast</label>
+              <label class="switch">
+                <input type="checkbox" id="hc" />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="row">
+              <label for="rm">Reduce Motion</label>
+              <label class="switch">
+                <input type="checkbox" id="rm" />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="row" style="justify-content:space-between">
+              <label>Text Size</label>
+              <div>
+                <button class="btn btn-ghost" id="txtNormal">Normal</button>
+                <button class="btn" id="txtLarge">Large</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO with editorial photo left, copy right on desktop -->
+    <section class="hero container">
+      <div class="wrap">
+        <div class="photo">
+          <img src="https://www.dartmoor.gov.uk/__data/assets/image/0034/408787/Leighon-Cirrus-Richard-Fox-Photography-subbanner.jpg" alt="Dartmoor landscape"/>
+        </div>
+        <div class="copy">
+          <h1>Britain's Breathing Space</h1>
+          <p>Ancient tors, clapper bridges and wide, open moorland. Discover a national landscape shaped by nature and people.</p>
+          <div class="actions" style="display:flex; gap:.6rem; flex-wrap:wrap">
+            <a class="btn" href="#">Plan Your Visit</a>
+            <a class="btn btn-ghost" href="#">Visitor Centres</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- three features with photography lead and simple shapes -->
+    <section class="section container">
+      <h2>Explore</h2>
+      <div class="grid grid-3">
+        <article class="card">
+          <div class="img">
+            <img src="https://www.dartmoor.gov.uk/__data/assets/image/0034/408787/Leighon-Cirrus-Richard-Fox-Photography-subbanner.jpg" alt="Walks and trails"/>
+          </div>
+          <div class="body">
+            <h3>Walks & Trails</h3>
+            <p>From gentle riverside paths to rugged tors, find your route.</p>
+            <a class="btn" href="#">View Routes</a>
+          </div>
+        </article>
+        <article class="card">
+          <div class="img">
+            <img src="https://www.dartmoor.gov.uk/__data/assets/image/0034/408787/Leighon-Cirrus-Richard-Fox-Photography-subbanner.jpg" alt="Wildlife and habitats"/>
+          </div>
+          <div class="body">
+            <h3>Wildlife</h3>
+            <p>Ponies, rare birds and blanket bogs — discover what makes Dartmoor special.</p>
+            <a class="btn" href="#">Discover Nature</a>
+          </div>
+        </article>
+        <article class="card">
+          <div class="img">
+            <img src="https://www.dartmoor.gov.uk/__data/assets/image/0034/408787/Leighon-Cirrus-Richard-Fox-Photography-subbanner.jpg" alt="Visitor centres"/>
+          </div>
+          <div class="body">
+            <h3>Visitor Centres</h3>
+            <p>Start your journey at Princetown, Postbridge or Haytor.</p>
+            <a class="btn" href="#">Find a Centre</a>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="paper">
+    <div class="container">Concept Theme B — Heritage / Nature-Classic • Dartmoor National Park</div>
+  </footer>
+
+  <script>
+    // dropdown toggle
+    const aBtn = document.getElementById('a11yBtn');
+    const panel = document.getElementById('a11yPanel');
+    aBtn.addEventListener('click', ()=>{
+      const open = panel.classList.toggle('open');
+      aBtn.setAttribute('aria-expanded', String(open));
+    });
+
+    // controls
+    document.getElementById('hc').addEventListener('change', e => document.body.classList.toggle('hc', e.target.checked));
+    document.getElementById('rm').addEventListener('change', e => document.body.classList.toggle('rm', e.target.checked));
+    document.getElementById('txtNormal').onclick = ()=> document.documentElement.style.fontSize = '100%';
+    document.getElementById('txtLarge').onclick = ()=> document.documentElement.style.fontSize = '110%';
+  </script>
+</body>
+</html>
